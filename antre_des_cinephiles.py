@@ -137,25 +137,28 @@ def afficher_film_aleatoire(df):
 
     return random_movie
 
-# Fonction pour afficher 3 affiches dans la page d'accueil
-def afficher_3_affiches(df):
-    random_movies = df[['localised_title', 'poster_path']].sample(n=3)
 
-    cols = st.columns(3)
-    for i, (_, movie) in enumerate(random_movies.iterrows()):
-        poster_url = f"https://image.tmdb.org/t/p/w200{movie['poster_path']}" if pd.notna(movie['poster_path']) else None
-        with cols[i]:
-            if poster_url:
-                st.image(poster_url, caption=movie['localised_title'], use_container_width=True)
-            else:
-                st.write("Aucune image disponible.")
+# Fonction pour afficher 6 affiches sur 2 lignes de 3 films
+def afficher_6_affiches(df):
+    random_movies = df[['localised_title', 'poster_path']].sample(n=6)  # Sélectionne 6 films au hasard
+    
+    # Diviser les 6 films en 2 groupes de 3
+    for row in range(2):  # 2 lignes
+        cols = st.columns(3)  # Créer 3 colonnes
+        for i, (_, movie) in enumerate(random_movies.iloc[row*3:(row+1)*3].iterrows()):  # 3 films par ligne
+            poster_url = f"https://image.tmdb.org/t/p/w200{movie['poster_path']}" if pd.notna(movie['poster_path']) else None
+            with cols[i]:
+                if poster_url:
+                    st.image(poster_url, caption=movie['localised_title'], use_container_width=True)
+                else:
+                    st.write("Aucune image disponible.")
 
 # Fonction pour afficher le contenu en fonction de la sélection
 def afficher_contenu(selection, df):
     if selection == "Accueil":
         st.write("Bienvenue sur la page d'accueil de **Ciné Réunion** ! 🎥")
         st.markdown("### Explorez les classiques du cinéma à travers notre interface interactive.")
-        afficher_3_affiches(df)
+        afficher_6_affiches(df)
 
     elif selection == "La base de données":
         st.write("### Détails de la base de données")
